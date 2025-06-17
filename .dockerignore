@@ -1,0 +1,25 @@
+# Ignorar arquivos de ambiente
+.env
+.env.dev
+
+# Ignorar diretórios de dependências
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar arquivos de logs
+*.log
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar diretórios de teste
+tests/
+test/
+
+# Ignorar diretórios do sistema de controle de versão
+.git/
+.gitignore

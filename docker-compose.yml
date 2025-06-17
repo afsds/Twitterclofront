@@ -1,0 +1,61 @@
+version: '3.8'  # ou uma versão mais recente, mas não obsoleta
+
+services:
+  db:
+    image: postgres:13.0-alpine
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=twitter_user
+      - POSTGRES_PASSWORD=twitter_password
+      - POSTGRES_DB=twitter_db
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 50M
+
+  web:
+    build: ./backend
+    command: >
+      sh -c "poetry install &&
+             poetry run python manage.py migrate &&
+             poetry run python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env.dev  
+    networks:
+      - backend
+    depends_on:
+      - db
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 50M
+
+  frontend:
+    build: ./frontend/twitter_clone
+    ports:
+      - 3000:3000  
+    networks:
+      - frontend
+    command: npm start  
+    depends_on:
+      - web  # Espera o backend ficar pronto
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+volumes:
+  postgres_data:
